@@ -2,7 +2,7 @@ FROM ubuntu:16.04
 
 Maintainer mondhs bus<mondhs@gmail.com>
 #docker build -t liepa-train-kaldi .
-#docker run -it liepa-train-kaldi bash
+#docker run -v /c/Users/Naudotojas/liepa/LIEPA_garsynas:/data -it liepa-train-kaldi bash
 
 #COPY opt /opt
 
@@ -25,5 +25,13 @@ WORKDIR "/opt/kaldi/src"
 RUN  ./configure 
 RUN make depend 
 RUN make
-RUN ln -s /opt/kaldi/egs/wsj/s5/steps/ steps
-RUN ln -s /opt/kaldi/egs/wsj/s5/utils/ utils
+
+RUN mkdir -p /opt/kaldi-liepa-train/liepa_audio
+RUN ln -s /opt/kaldi/egs/wsj/s5/steps/ /opt/kaldi-liepa-train/steps
+RUN ln -s /opt/kaldi/egs/wsj/s5/utils/ /opt/kaldi-liepa-train/utils
+RUN ln -s /data/train_repo /opt/kaldi-liepa-train/liepa_audio/train
+RUN ln -s /data/test_repo /opt/kaldi-liepa-train/liepa_audio/test
+
+WORKDIR "/opt/kaldi/tools"
+RUN ./install_srilm.sh
+
