@@ -1,8 +1,13 @@
 FROM ubuntu:16.04
 
 Maintainer mondhs bus<mondhs@gmail.com>
+##### Build docker
 #docker build -t liepa-train-kaldi .
-#docker run -v /c/Users/Naudotojas/liepa/LIEPA_garsynas:/data -it liepa-train-kaldi bash
+##### Bash interface
+#docker run  -v /c/Users/Naudotojas/liepa/LIEPA_garsynas:/data -it liepa-train-kaldi bash
+#### Web wrapper
+#docker run -p 8081:8081 -p 8082:8082 -v /c/Users/Naudotojas/liepa/LIEPA_garsynas:/data -it liepa-train-kaldi
+
 
 # Thanks:
 ## https://github.com/keighrim/kaldi-yesno-tutorial
@@ -15,21 +20,17 @@ COPY opt /opt
 
 ###################### INSTALL Kaldi ##############################
 
+
 RUN \
   sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
   apt-get update && \
   apt-get -y upgrade  && \
-  apt-get install -y --no-install-recommends apt-utils
-  apt-get install -y git
+  apt-get install -y --no-install-recommends apt-utils git ca-certificates curl sudo
 
 # Kaldi toolkit
 RUN git clone https://github.com/kaldi-asr/kaldi.git /opt/kaldi --depth 1
-#Web training wrapper
-RUN git clone  https://github.com/mondhs/nodejs_kaldi_train_wrapper.git /opt/wrapper --depth 1
-#Liepa training files
-RUN git clone  https://github.com/mondhs/kaldi-liepa-train.git /opt/kaldi-liepa-train --depth 1
 
-#RUN apt-get install -y build-essential zlib1g-dev automake autoconf wget libtool subversion python libatlas3-base
+RUN apt-get install -y build-essential zlib1g-dev automake autoconf wget libtool subversion python libatlas3-base
 
 
 #WORKDIR "/opt/kaldi/tools"
@@ -47,3 +48,14 @@ RUN git clone  https://github.com/mondhs/kaldi-liepa-train.git /opt/kaldi-liepa-
 
 #WORKDIR "/opt/kaldi/tools"
 #RUN ./install_srilm.sh
+
+############################### Web Wrapper ##########################################
+
+#Web training wrapper
+RUN git clone  https://github.com/mondhs/nodejs_kaldi_train_wrapper.git /opt/wrapper --depth 1
+
+RUN curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash -
+RUN sudo apt-get install -y nodejs
+WORKDIR "/opt/wrapper"
+RUN npm install ws --save
+CMD ["npm", "start"]
