@@ -1,6 +1,8 @@
 FROM ubuntu:16.04
 
 Maintainer mondhs bus<mondhs@gmail.com>
+##### Extend docker mashine to 50G
+# docker machine -D create -d virtualbox --virtualbox-disk-size "50000" default
 ##### Build docker
 #docker build -t liepa-train-kaldi .
 ##### Bash interface
@@ -15,8 +17,6 @@ Maintainer mondhs bus<mondhs@gmail.com>
 
 COPY opt /opt
 
-#RUN curl -SL https://github.com/kaldi-asr/kaldi/archive/master.zip | tar -xz -C /opt/
-#RUN curl -SL https://github.com/mondhs/kaldi-liepa-train/archive/master.zip | tar -xz -C /opt/
 
 ###################### INSTALL Kaldi ##############################
 
@@ -30,7 +30,7 @@ RUN \
 # Kaldi toolkit
 RUN git clone https://github.com/kaldi-asr/kaldi.git /opt/kaldi --depth 1
 
-RUN apt-get install -y build-essential zlib1g-dev automake autoconf wget libtool subversion python libatlas3-base
+RUN apt-get install -y build-essential gawk zlib1g-dev automake autoconf wget libtool subversion python libatlas3-base
 
 
 #WORKDIR "/opt/kaldi/tools"
@@ -47,6 +47,9 @@ RUN apt-get install -y build-essential zlib1g-dev automake autoconf wget libtool
 #RUN ln -s /data/test_repo /opt/kaldi-liepa-train/liepa_audio/test
 
 #WORKDIR "/opt/kaldi/tools"
+# from where we shoudl download???
+# COPY /data/srilm-1.7.2.tar.gz /opt/kaldi/tools/srilm.tgz
+RUN curl  https://raw.githubusercontent.com/denizyuret/nlpcourse/master/download/srilm-1.7.0.tgz > /opt/kaldi/tools/srilm.tgz
 #RUN ./install_srilm.sh
 
 ############################### Web Wrapper ##########################################
