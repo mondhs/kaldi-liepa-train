@@ -33,18 +33,18 @@ RUN git clone https://github.com/kaldi-asr/kaldi.git /opt/kaldi --depth 1
 RUN apt-get install -y build-essential gawk zlib1g-dev automake autoconf wget libtool subversion python libatlas3-base
 
 
-#WORKDIR "/opt/kaldi/tools"
-#RUN make
-#WORKDIR "/opt/kaldi/src"
-#RUN  ./configure
-#RUN make depend
-#RUN make
+WORKDIR "/opt/kaldi/tools"
+RUN make
+WORKDIR "/opt/kaldi/src"
+RUN  ./configure
+RUN make depend
+RUN make
 
-#RUN mkdir -p /opt/kaldi-liepa-train/liepa_audio
-#RUN ln -s /opt/kaldi/egs/wsj/s5/steps/ /opt/kaldi-liepa-train/steps
-#RUN ln -s /opt/kaldi/egs/wsj/s5/utils/ /opt/kaldi-liepa-train/utils
-#RUN ln -s /data/train_repo /opt/kaldi-liepa-train/liepa_audio/train
-#RUN ln -s /data/test_repo /opt/kaldi-liepa-train/liepa_audio/test
+RUN mkdir -p /opt/kaldi-liepa-train/liepa_audio
+RUN ln -s /opt/kaldi/egs/wsj/s5/steps/ /opt/kaldi-liepa-train/steps
+RUN ln -s /opt/kaldi/egs/wsj/s5/utils/ /opt/kaldi-liepa-train/utils
+RUN ln -s /data/train_repo /opt/kaldi-liepa-train/liepa_audio/train
+RUN ln -s /data/test_repo /opt/kaldi-liepa-train/liepa_audio/test
 
 #WORKDIR "/opt/kaldi/tools"
 # from where we shoudl download???
@@ -56,6 +56,8 @@ RUN curl  https://raw.githubusercontent.com/denizyuret/nlpcourse/master/download
 
 #Web training wrapper
 RUN git clone  https://github.com/mondhs/nodejs_kaldi_train_wrapper.git /opt/wrapper --depth 1
+RUN rm -rf /opt/wrapper/contol_files
+RUN ln -s /opt/kaldi-liepa-train /opt/wrapper/contol_files
 
 RUN curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash -
 RUN sudo apt-get install -y nodejs
