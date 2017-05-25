@@ -46,11 +46,11 @@ RUN ln -s /opt/kaldi/egs/wsj/s5/utils/ /opt/kaldi-liepa-train/utils
 RUN ln -s /data/train_repo /opt/kaldi-liepa-train/liepa_audio/train
 RUN ln -s /data/test_repo /opt/kaldi-liepa-train/liepa_audio/test
 
-#WORKDIR "/opt/kaldi/tools"
-# from where we shoudl download???
+WORKDIR "/opt/kaldi/tools"
+# Please, do not use this link. You must download your self: http://www.speech.sri.com/projects/srilm/download.html
 # COPY /data/srilm-1.7.2.tar.gz /opt/kaldi/tools/srilm.tgz
 RUN curl  https://raw.githubusercontent.com/denizyuret/nlpcourse/master/download/srilm-1.7.0.tgz > /opt/kaldi/tools/srilm.tgz
-#RUN ./install_srilm.sh
+RUN ./install_srilm.sh
 
 ############################### Web Wrapper ##########################################
 
