@@ -34,11 +34,11 @@ RUN apt-get install -y build-essential gawk zlib1g-dev automake autoconf wget li
 
 
 WORKDIR "/opt/kaldi/tools"
-RUN make
+RUN make -j 2
 WORKDIR "/opt/kaldi/src"
 RUN  ./configure
-RUN make depend
-RUN make
+RUN make -j 2 depend
+RUN make -j 2
 
 RUN mkdir -p /opt/kaldi-liepa-train/liepa_audio
 RUN ln -s /opt/kaldi/egs/wsj/s5/steps/ /opt/kaldi-liepa-train/steps
