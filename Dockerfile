@@ -25,42 +25,46 @@ RUN \
   sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
   apt-get update && \
   apt-get -y upgrade  && \
-  apt-get install -y --no-install-recommends apt-utils git ca-certificates curl sudo
+  apt-get install -y --no-install-recommends apt-utils git ca-certificates build-essential gawk zlib1g-dev automake autoconf wget libtool python3 python libatlas3-base subversion && \
+  rm -rf /var/lib/apt/lists/*
 
 # Kaldi toolkit
 RUN git clone https://github.com/kaldi-asr/kaldi.git /opt/kaldi --depth 1
-
-RUN apt-get install -y build-essential gawk zlib1g-dev automake autoconf wget libtool subversion python libatlas3-base
 
 
 WORKDIR "/opt/kaldi/tools"
 RUN make -j 2
 WORKDIR "/opt/kaldi/src"
-RUN  ./configure
-RUN make -j 2 depend
-RUN make -j 2
+RUN  ./configure 
+RUN make -j 2 depend && make -j 2
 
-RUN mkdir -p /opt/kaldi-liepa-train/liepa_audio
-RUN ln -s /opt/kaldi/egs/wsj/s5/steps/ /opt/kaldi-liepa-train/steps
-RUN ln -s /opt/kaldi/egs/wsj/s5/utils/ /opt/kaldi-liepa-train/utils
-RUN ln -s /data/train_repo /opt/kaldi-liepa-train/liepa_audio/train
-RUN ln -s /data/test_repo /opt/kaldi-liepa-train/liepa_audio/test
+RUN mkdir -p /opt/kaldi-liepa-train/liepa_audio  && \
+  ln -s /opt/kaldi/egs/wsj/s5/steps/ /opt/kaldi-liepa-train/steps  && \
+  ln -s /opt/kaldi/egs/wsj/s5/utils/ /opt/kaldi-liepa-train/utils  && \
+  ln -s /data/train_repo /opt/kaldi-liepa-train/liepa_audio/train && \
+  ln -s /data/test_repo /opt/kaldi-liepa-train/liepa_audio/test && \
+  ln -s /data/kaldi_data/data /opt/kaldi-liepa-train/data
 
 WORKDIR "/opt/kaldi/tools"
 # Please, do not use this link. You must download your self: http://www.speech.sri.com/projects/srilm/download.html
 # COPY /data/srilm-1.7.2.tar.gz /opt/kaldi/tools/srilm.tgz
-RUN curl  https://raw.githubusercontent.com/denizyuret/nlpcourse/master/download/srilm-1.7.0.tgz > /opt/kaldi/tools/srilm.tgz
-RUN ./install_srilm.sh
+RUN wget -O /opt/kaldi/tools/srilm.tgz https://raw.githubusercontent.com/denizyuret/nlpcourse/master/download/srilm-1.7.0.tgz && \
+   ./install_srilm.sh
 
 ############################### Web Wrapper ##########################################
 
 #Web training wrapper
 RUN git clone  https://github.com/mondhs/nodejs_kaldi_train_wrapper.git /opt/wrapper --depth 1
-RUN rm -rf /opt/wrapper/contol_files
-RUN ln -s /opt/kaldi-liepa-train /opt/wrapper/contol_files
+RUN rm -rf /opt/wrapper/contol_files && \
+   ln -s /opt/kaldi-liepa-train /opt/wrapper/contol_files
 
-RUN curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash -
-RUN sudo apt-get install -y nodejs
+RUN wget -q -O - https://deb.nodesource.com/setup_9.x | bash -
+RUN apt-get install -y nodejs
+
+#wget -q -O- https://nodejs.org/dist/v9.4.0/node-v9.4.0-linux-x64.tar.xz | tar --transform 's/^node-v9.4.0-linux-x64/nodejs/' -xJv -C /usr/lib/
+
+
+RUN apt-get purge git wget automake autoconf subversion
 WORKDIR "/opt/wrapper"
 RUN npm install ws --save
 CMD ["npm", "start"]
