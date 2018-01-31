@@ -36,7 +36,9 @@ WORKDIR "/opt/kaldi/tools"
 RUN make -j 2
 WORKDIR "/opt/kaldi/src"
 RUN  ./configure 
-RUN make -j 2 depend && make -j 2
+RUN make -j 2 depend 
+RUN  make -j 2
+
 
 RUN mkdir -p /opt/kaldi-liepa-train/liepa_audio  && \
   ln -s /opt/kaldi/egs/wsj/s5/steps/ /opt/kaldi-liepa-train/steps  && \
