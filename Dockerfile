@@ -60,13 +60,15 @@ RUN git clone  https://github.com/mondhs/nodejs_kaldi_train_wrapper.git /opt/wra
 RUN rm -rf /opt/wrapper/contol_files && \
    ln -s /opt/kaldi-liepa-train /opt/wrapper/contol_files
 
-RUN wget -q -O - https://deb.nodesource.com/setup_9.x | bash -
-RUN apt-get install -y nodejs
+#RUN wget -q -O - https://deb.nodesource.com/setup_9.x | bash -
+#RUN apt-get install -y nodejs
 
-#wget -q -O- https://nodejs.org/dist/v9.4.0/node-v9.4.0-linux-x64.tar.xz | tar --transform 's/^node-v9.4.0-linux-x64/nodejs/' -xJv -C /usr/lib/
+RUN wget -q -O- https://nodejs.org/dist/v9.4.0/node-v9.4.0-linux-x64.tar.xz | tar --transform 's/^node-v9.4.0-linux-x64/nodejs/' -xJv -C /usr/lib/
+ENV NODEJS_HOME=/usr/lib/nodejs
+ENV PATH=$NODEJS_HOME/bin:$PATH
 
 
-RUN apt-get purge git wget automake autoconf subversion
+RUN apt-get purge git wget automake autoconf subversion && apt autoremove
 WORKDIR "/opt/wrapper"
 RUN npm install ws --save
 CMD ["npm", "start"]
