@@ -68,7 +68,7 @@ ENV NODEJS_HOME=/usr/lib/nodejs
 ENV PATH=$NODEJS_HOME/bin:$PATH
 
 
-RUN apt-get purge git wget automake autoconf subversion && apt autoremove
+#RUN apt-get purge git wget automake autoconf subversion && apt autoremove
 WORKDIR "/opt/wrapper"
 RUN npm install ws --save
 CMD ["npm", "start"]
