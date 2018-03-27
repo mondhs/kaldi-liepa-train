@@ -1,14 +1,24 @@
-
-### Training
-
-* create dir for training ```mkdir -p ./target/data/train/ ./target/data/test/ ./target/data/local/```
-* create sphinx transcription files for test and train
-* run transform_liepa2csv.py to get 2 csv files
-* run ./data_prep.py to get kaldi files
+# sphinx_liepa_train_docker
 
 
+Prielaidą, kad vartoojas žino kas yra linux ir docker.
 
+1. Parsitempti docker kaldi mokymo failus: 
+   ```
+   docker pull mondhs/kaldi-liepa-train
 
-* start docker
-* change ```rm -rf data && ln -s /data/kaldi_data/data data```
-* run run.sh
+   ```
+1. sukurti direktoriją */home/VARTOTOJAS/liepa_test* - vadinsim *LIEPA_DIREKTORIJA*
+1. Parsisiųsti LIEPA_garsynas_1.10.zip https://drive.google.com/drive/folders/1HgWjBn7LGFueSIfQe0wN_-sxd6TOPPsI
+   1. užima zip 1,3GB. Iš archivuotas 1,6GB
+1. Išskleisti */home/VARTOTOJAS/liepa_test/LIEPA_garsynas*. Jame turi būti svarbiasios direktorijos:
+   1. ./LIEPA_garsynas/kaldi_data/
+   1. ./LIEPA_garsynas/test_repo/
+   1. ./LIEPA_garsynas/train_repo/
+1. Paleisti komandą su bash mokymo sąsaja *LIEPA_DIREKTORIJOJE*
+   ```
+   docker run  -v $(realpath ./LIEPA_garsynas):/data -it mondhs/kaldi_liepa_train bash
+   ```
+1. docker nueiti į ```cd :/opt/kaldi-liepa-train/```
+1. paleisti ```sh 01_run.sh```
+1. mokymo pabaigoje galima suglaudinti svarbiausias bylas su ```sh 02_archive.sh``` ir persiųsti jas į */home/VARTOTOJAS/liepa_test/LIEPA_garsynas*
